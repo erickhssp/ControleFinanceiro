@@ -4,6 +4,7 @@ using System.Web.Mvc;
 
 namespace Financas.Controllers
 {
+    [Authorize]
     public class MovimentacaoController : Controller
     {
         private MovimentacaoDAO movimentacaoDAO;
