@@ -1,5 +1,8 @@
 ﻿using Financas.DAO;
 using Financas.Entidades;
+using Financas.Models;
+using System.Collections;
+using System.Collections.Generic;
 using System.Web.Mvc;
 
 namespace Financas.Controllers
@@ -10,7 +13,7 @@ namespace Financas.Controllers
         private MovimentacaoDAO movimentacaoDAO;
         private UsuarioDAO usuarioDAO;
 
-        public MovimentacaoController(MovimentacaoDAO movimentacaoDAO,UsuarioDAO usuarioDAO)
+        public MovimentacaoController(MovimentacaoDAO movimentacaoDAO, UsuarioDAO usuarioDAO)
         {
             this.movimentacaoDAO = movimentacaoDAO;
             this.usuarioDAO = usuarioDAO;
@@ -31,13 +34,28 @@ namespace Financas.Controllers
             else
             {
                 ViewBag.Usuarios = usuarioDAO.Lista();
-                return View("Form");
+                return View("Form", movimentacao);
             }
         }
 
         public ActionResult Index()
         {
-            return View(movimentacaoDAO.Lista());
+           IList<Movimentacao> movimentacoes = movimentacaoDAO.Lista();
+            return View(movimentacoes);
+        }
+
+        public ActionResult MovimentacoesPorUsuario(MovimentacoesPorUsuarioModel model)
+        {
+            model.Usuarios = usuarioDAO.Lista();
+            model.Movimentacoes = movimentacaoDAO.BuscaPorUsuario(model.UsuarioId);
+            return View(model);
+        }
+
+        public ActionResult Busca(BuscaMovimentacoesModel model)
+        {
+            model.Usuarios = usuarioDAO.Lista();
+            model.Movimentacoes = movimentacaoDAO.Busca(model.ValorMinimo, model.ValorMaximo, model.DataMinima, model.DataMaxima, model.Tipo, model.UsuarioId);
+            return View(model);
         }
 
     }
